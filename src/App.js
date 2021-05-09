@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { Wallet } from '@ethersproject/wallet';
+import { ethers, providers } from 'ethers';
+import WalletDetails from './WalletDetails';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      address: undefined,
+      wallet: undefined
+    }
+  }
+
+  async createWallet() {
+    if (typeof this.state.wallet !== 'undefined') {
+      return;
+    }
+    var wallet = Wallet.createRandom();
+    this.setState({ wallet: wallet.connect(new providers.JsonRpcProvider()) })
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          Your Web Wallet
+        </header>
+        {typeof this.state.wallet == 'undefined' && <button onClick={() => this.createWallet()}>Click here to create your wallet</button>}
+        {typeof this.state.wallet !== 'undefined' && <WalletDetails wallet={this.state.wallet}/>}
+      </div>
+    );
+  }
 }
-
-export default App;
